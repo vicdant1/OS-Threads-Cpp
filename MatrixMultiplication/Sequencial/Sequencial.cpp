@@ -2,6 +2,10 @@
 #include <filesystem>
 #include <iostream>
 #include <fstream>
+#include <ctime>
+#include <chrono>
+#include <sstream>
+#include <windows.h>
 
 
 namespace Utils
@@ -39,6 +43,18 @@ namespace Utils
 		res.push_back(s.substr(pos_start));
 		return res;
 	}
+
+	bool dirExists(const std::string& dirName_in)
+	{
+		DWORD ftyp = GetFileAttributesA(dirName_in.c_str());
+		if (ftyp == INVALID_FILE_ATTRIBUTES)
+			return false;  //something is wrong with your path!
+
+		if (ftyp & FILE_ATTRIBUTE_DIRECTORY)
+			return true;   // this is a directory!
+
+		return false;    // this is not a directory!
+	}
 }
 
 
@@ -50,7 +66,6 @@ Sequencial::Sequencial()
 	this->m1 = new Matrix();
 	this->m2 = new Matrix();
 	this->mResult = new Matrix();
-
 }
 
 void Sequencial::ReadFile(string m1FilePath, string m2FilePath)
@@ -112,12 +127,22 @@ void Sequencial::CalculateResult()
 		exit(0);
 	}
 
-
 	int nFinal = this->m1->GetN();
 	int mFinal = this->m2->GetM();
 
-	cout << "Matriz resultante terá dimensões " << nFinal << "x" << mFinal << "\n";
+	//Creating filename
+	fs::path workingDir(fs::current_path());
+	auto targetPath = workingDir.parent_path();
+	auto now = chrono::system_clock::now();
+	auto UTC = chrono::duration_cast<chrono::seconds>(now.time_since_epoch()).count();
+	string targetFilePath = fs::absolute(targetPath).string() + "\\Results\\Sequencial\\" + to_string(nFinal) + "x" + to_string(mFinal) + "\\";
+	string targetFileName = targetFilePath + to_string(UTC) + ".txt";
 
+	if (!fs::exists(targetFilePath))
+		fs::create_directories(targetFilePath);
+
+	//Calculating matrix
+	auto begin = chrono::system_clock::now();
 	for (int i = 0; i < nFinal; i++)
 	{
 		this->mResult->body.push_back(vector<int>());
@@ -128,48 +153,24 @@ void Sequencial::CalculateResult()
 			{
 				mult += this->m1->body[i][c] * this->m2->body[c][j];
 			}
-
 			this->mResult->body[i].push_back(mult);
 		}
 	}
+	auto end = chrono::system_clock::now();
+	auto duration = chrono::duration_cast<chrono::milliseconds>(end - begin).count();
 
-	
-	// printando matrizes para validar
 
-	/*cout << "M1:\n";
-	for (auto row : this->m1->body)
+	ofstream file(targetFileName);
+	//Inserting data into file
+	file << nFinal << " " << mFinal << endl;
+	for (int i = 0; i < nFinal; i++)
 	{
-		for (auto element : row)
+		for (int j = 0; j < mFinal; j++)
 		{
-			cout << element << " ";
+			file << "c" << i + 1 << j + 1 << " " << this->mResult->body[i][j] << endl;
 		}
-		cout << "\n";
 	}
-	cout << "\n\n";
+	file << duration;
 
-	cout << "M2:\n";
-	for (auto row : this->m2->body)
-	{
-		for (auto element : row)
-		{
-			cout << element << " ";
-		}
-		cout << "\n";
-	}
-	cout << "\n\n";
-
-	cout << "M1:\n";
-	for (auto row : this->mResult->body)
-	{
-		for (auto element : row)
-		{
-			cout << element << " ";
-		}
-		cout << "\n";
-	}
-	cout << "\n\n";*/
-}
-
-void Sequencial::SaveFile()
-{
+	file.close();
 }

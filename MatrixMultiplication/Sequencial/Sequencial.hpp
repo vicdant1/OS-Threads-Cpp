@@ -12,7 +12,6 @@ public:
 	Sequencial();
 	void ReadFile(std::string m1FilePath, std::string m2FilePath);
 	void CalculateResult();
-	void SaveFile();
 private:
 	Matrix* m1;
 	Matrix* m2;
