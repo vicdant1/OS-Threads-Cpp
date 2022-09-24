@@ -58,12 +58,12 @@ Matrix *mr = new Matrix();
 namespace fs = std::filesystem;
 void *ThreadCalc(void *tid) {
   fs::path workingDir(fs::current_path());
-  auto targetPath = workingDir.parent_path();
+  auto targetPath = workingDir.parent_path().parent_path();
   string targetFilePath = fs::absolute(targetPath).string() +
-                          "\\Results\\Threads\\" + to_string(mr->n) + "x" +
-                          to_string(mr->m) + "\\";
+                          "/ProjectAssets/Results/Threads/" + to_string(mr->n) + "x" +
+                          to_string(mr->m) + "/";
   string targetFileName = targetFilePath + to_string(mr->n) + "x" +
-                          to_string(mr->m) + "thread_" +
+                          to_string(mr->m) + "_thread_" +
                           to_string((size_t)tid) + ".txt";
 
   if (!fs::exists(targetFilePath))
