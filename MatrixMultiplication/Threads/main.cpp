@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
     mr->body.push_back(vector<int>());
     for(int j = 0; j < mr->m; i++)
     {
-      mr->body[i][j] = 0;
+      mr->body[i].push_back(0);
     }
   }
 
