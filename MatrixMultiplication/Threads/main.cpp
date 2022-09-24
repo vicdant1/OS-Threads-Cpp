@@ -3,7 +3,9 @@
 #include <vector>
 
 using namespace std;
-class Matrix {
+
+class Matrix 
+{
 public:
   Matrix() {}
   vector<vector<int>> body;
@@ -11,25 +13,27 @@ public:
   int m;
 };
 
+// Global variables
 int p = 0;
 Matrix *m1 = new Matrix();
 Matrix *m2 = new Matrix();
 Matrix *mr = new Matrix();
 
-void *ThreadCalc(void *tid) {
+void *ThreadCalc(void *tid) 
+{
   int currentRow = (p * (size_t)tid) / mr->n;
   int currentColumn = (p * (size_t)tid) % mr->m;
 
-  for (int i = 0; i < p; i++) {
-    for (int j = 0; j < mr->m; j++) {
-      mr->body[currentRow][currentColumn] +=
-          m1->body[currentRow][j] * m2->body[j][currentColumn];
-    }
+  for (int i = 0; i < p; i++) 
+  {
+    for (int j = 0; j < mr->m; j++) 
+      mr->body[currentRow][currentColumn] += m1->body[currentRow][j] * m2->body[j][currentColumn];
 
-    cout << "c" << currentRow << currentColumn << " "
-         << mr->body[currentRow][currentColumn] << endl;
+    cout << "c" << currentRow << currentColumn << " " << mr->body[currentRow][currentColumn] << endl;
+
     currentColumn++;
-    if (currentColumn == mr->m) {
+    if (currentColumn == mr->m) 
+    {
       currentRow++;
       currentColumn = 0;
     }
@@ -38,64 +42,48 @@ void *ThreadCalc(void *tid) {
   pthread_exit(NULL);
 }
 
-int main(int argc, char *argv[]) {
-  if (argc < 4) {
+int main(int argc, char *argv[]) 
+{
+  if (argc < 4) 
+  {
     cout << "Quantidade de parâmetros inválida\n";
     exit(0);
   }
 
   // Creating fake matrix
-  m1->n = 3;
-  m1->m = 3;
+  m1->n = 100;
+  m1->m = 100;
 
-  m2->n = 3;
-  m2->m = 3;
+  m2->n = 100;
+  m2->m = 100;
 
-  for (int i = 0; i < m1->n; i++) {
+  for (int i = 0; i < m1->n; i++) 
+  {
     m1->body.push_back(vector<int>());
-    for (int j = 0; j < m1->m; j++) {
+    for (int j = 0; j < m1->m; j++) 
       m1->body[i].push_back(rand() % 10 + 1);
-    }
   }
 
-  for (int i = 0; i < m2->n; i++) {
+  for (int i = 0; i < m2->n; i++) 
+  {
     m2->body.push_back(vector<int>());
-    for (int j = 0; j < m2->m; j++) {
+    for (int j = 0; j < m2->m; j++) 
       m2->body[i].push_back(rand() % 10 + 1);
-    }
-  }
-
-  // printing fake matrix
-  for (int i = 0; i < m1->n; i++) {
-    for (int j = 0; j < m1->m; j++) {
-      cout << m1->body[i][j] << " ";
-    }
-    cout << endl;
-  }
-
-  cout << endl;
-
-  for (int i = 0; i < m2->n; i++) {
-    for (int j = 0; j < m2->m; j++) {
-      cout << m2->body[i][j] << " ";
-    }
-    cout << endl;
   }
 
   // feeding result matrix
-
   mr->n = m1->n;
   mr->m = m2->m;
-  for (int i = 0; i < mr->n; i++) {
+  for (int i = 0; i < mr->n; i++) 
+  {
     mr->body.push_back(vector<int>());
-    for (int j = 0; j < mr->m; j++) {
+    for (int j = 0; j < mr->m; j++) 
       mr->body[i].push_back(0);
-    }
   }
 
   p = atoi(argv[3]);
-  cout << "Valor de p: " << p << endl;
 
+  cout << "Valor de p: " << p << endl;
   cout << "Matriz final terá dimensões: " << mr->n << "x" << mr->m << endl;
 
   int totalElementCounter = mr->n * mr->m;
@@ -104,26 +92,17 @@ int main(int argc, char *argv[]) {
   if (totalElementCounter % p > 0)
     threadsNumber++;
 
-  cout << "Numero de threads criadas: " << threadsNumber << endl;
-
+  // Creating threads
   pthread_t threads[threadsNumber];
   int status = 0;
-  for (int i = 0; i < threadsNumber; i++) {
-    status = pthread_create(&threads[i], NULL, ThreadCalc, (void *)(size_t)(i));
-    cout << "status " << status << endl;
-  }
 
-  for (int i = 0; i < threadsNumber; i++) {
+  cout << "Numero de threads criadas: " << threadsNumber << endl;
+
+  for (int i = 0; i < threadsNumber; i++) 
+    status = pthread_create(&threads[i], NULL, ThreadCalc, (void *)(size_t)i);
+
+  for (int i = 0; i < threadsNumber; i++) 
     pthread_join(threads[i], NULL);
-  }
-
-  // printing fake matrix
-  for (int i = 0; i < mr->n; i++) {
-    for (int j = 0; j < mr->m; j++) {
-      cout << mr->body[i][j] << " ";
-    }
-    cout << endl;
-  }
 
   return 0;
 }
