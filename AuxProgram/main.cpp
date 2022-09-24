@@ -22,7 +22,7 @@ std::vector<std::vector<int>> GenerateMatrix(int n, int m) {
     }
   }
 
-  sleep(1000);
+  sleep(0.5);
 
   return matriz;
 }
@@ -33,9 +33,9 @@ void CreateFile(std::vector<std::vector<int>> matrix, int n, int m) {
 
   fs::path workingDir(fs::current_path());
   fs::current_path(workingDir);
-  auto currentpath = workingDir.parent_path().parent_path();
+  auto currentpath = workingDir.parent_path();
   std::string targetPathString =
-      fs::absolute(currentpath).string() + "\\ProjectAssets\\";
+      fs::absolute(currentpath).string() + "/ProjectAssets/";
   std::string targetFileName =
       targetPathString + "M" + std::to_string(matrixCounter) + ".txt";
 
@@ -51,7 +51,7 @@ void CreateFile(std::vector<std::vector<int>> matrix, int n, int m) {
     file << "\n";
   }
 
-  sleep(1000);
+  sleep(0.5);
 
   file.close();
 }
