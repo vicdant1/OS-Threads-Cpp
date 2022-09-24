@@ -3,9 +3,6 @@
 #include <vector>
 
 using namespace std;
-
-void *ThreadCalc(void *tid) {}
-
 class Matrix {
 public:
   Matrix() {}
@@ -14,6 +11,33 @@ public:
   int m;
 };
 
+int p = 0;
+Matrix *m1 = new Matrix();
+Matrix *m2 = new Matrix();
+Matrix *mr = new Matrix();
+
+void *ThreadCalc(void *tid) {
+  int currentRow = (p * (size_t)tid) / mr->n;
+  int currentColumn = (p * (size_t)tid) % mr->m;
+
+  for (int i = 0; i < p; i++) {
+    for (int j = 0; j < mr->m; j++) {
+      mr->body[currentRow][currentColumn] +=
+          m1->body[currentRow][j] * m2->body[j][currentColumn];
+    }
+
+    cout << "c" << currentRow << currentColumn << " "
+         << mr->body[currentRow][currentColumn] << endl;
+    currentColumn++;
+    if (currentColumn == mr->m) {
+      currentRow++;
+      currentColumn = 0;
+    }
+  }
+
+  pthread_exit(NULL);
+}
+
 int main(int argc, char *argv[]) {
   if (argc < 4) {
     cout << "Quantidade de parâmetros inválida\n";
@@ -21,10 +45,6 @@ int main(int argc, char *argv[]) {
   }
 
   // Creating fake matrix
-  Matrix *m1 = new Matrix();
-  Matrix *m2 = new Matrix();
-  Matrix *mr = new Matrix();
-
   m1->n = 3;
   m1->m = 3;
 
@@ -68,12 +88,12 @@ int main(int argc, char *argv[]) {
   mr->m = m2->m;
   for (int i = 0; i < mr->n; i++) {
     mr->body.push_back(vector<int>());
-    for (int j = 0; j < mr->m; i++) {
+    for (int j = 0; j < mr->m; j++) {
       mr->body[i].push_back(0);
     }
   }
 
-  int p = atoi(argv[3]);
+  p = atoi(argv[3]);
   cout << "Valor de p: " << p << endl;
 
   cout << "Matriz final terá dimensões: " << mr->n << "x" << mr->m << endl;
@@ -87,14 +107,22 @@ int main(int argc, char *argv[]) {
   cout << "Numero de threads criadas: " << threadsNumber << endl;
 
   pthread_t threads[threadsNumber];
-
+  int status = 0;
   for (int i = 0; i < threadsNumber; i++) {
-    threads[i] =
-        pthread_create(&threads[i], NULL, ThreadCalc, (void *)(size_t)i);
+    status = pthread_create(&threads[i], NULL, ThreadCalc, (void *)(size_t)(i));
+    cout << "status " << status << endl;
   }
 
   for (int i = 0; i < threadsNumber; i++) {
     pthread_join(threads[i], NULL);
+  }
+
+  // printing fake matrix
+  for (int i = 0; i < mr->n; i++) {
+    for (int j = 0; j < mr->m; j++) {
+      cout << mr->body[i][j] << " ";
+    }
+    cout << endl;
   }
 
   return 0;
