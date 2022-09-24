@@ -1,0 +1,7 @@
+
+build/
+.replit
+*.o
+*.nix
+.ccls-cache/
+Makefile/

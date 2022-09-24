@@ -6,7 +6,7 @@ int main(int argc, char* argv[])
 {
 	if (argc < 3)
 	{
-		cout << "Parâmetros inválidos. Revise e tente novamente\n";
+		cout << "ParÃ¢metros invÃ¡lidos. Revise e tente novamente\n";
 		exit(0);
 	}
 
