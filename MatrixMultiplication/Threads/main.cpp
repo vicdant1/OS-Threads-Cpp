@@ -3,6 +3,13 @@
 #include <vector>
 #include <fstream>
 
+
+
+
+// Pendente teste com cawan -> buildar sequencial e threads na arquitetura do pc dele.
+// Pendente contabilizacao de tempo e criacao de arquivo de saida -> ja feito no sequencial e impossível fazer sem o computador alvo. 
+
+
 using namespace std;
 
 class Matrix 
