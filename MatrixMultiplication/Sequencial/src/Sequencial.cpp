@@ -5,7 +5,12 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+
+#ifdef _WIN32
 #include <windows.h>
+#else
+#include <unistd.h>
+#endif
 
 namespace Utils {
 std::string toRemove = " \n\r\t\f\v";
@@ -37,16 +42,6 @@ std::vector<std::string> Split(std::string s, std::string delimiter) {
   return res;
 }
 
-bool dirExists(const std::string &dirName_in) {
-  DWORD ftyp = GetFileAttributesA(dirName_in.c_str());
-  if (ftyp == INVALID_FILE_ATTRIBUTES)
-    return false; // something is wrong with your path!
-
-  if (ftyp & FILE_ATTRIBUTE_DIRECTORY)
-    return true; // this is a directory!
-
-  return false; // this is not a directory!
-}
 } // namespace Utils
 
 namespace fs = std::filesystem;
@@ -117,13 +112,13 @@ void Sequencial::CalculateResult() {
 
   // Creating filename
   fs::path workingDir(fs::current_path());
-  auto targetPath = workingDir.parent_path();
+  auto targetPath = workingDir.parent_path().parent_path().parent_path();
   auto now = chrono::system_clock::now();
   auto UTC =
       chrono::duration_cast<chrono::seconds>(now.time_since_epoch()).count();
   string targetFilePath = fs::absolute(targetPath).string() +
-                          "\\Results\\Sequencial\\" + to_string(nFinal) + "x" +
-                          to_string(mFinal) + "\\";
+                          "/ProjectAssets/Results/Sequencial/" + to_string(nFinal) + "x" +
+                          to_string(mFinal) + "/";
   string targetFileName = targetFilePath + to_string(UTC) + ".txt";
 
   if (!fs::exists(targetFilePath))
