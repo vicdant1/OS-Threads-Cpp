@@ -4,6 +4,8 @@
 
 using namespace std;
 
+void *ThreadCalc(void *tid) {}
+
 class Matrix {
 public:
   Matrix() {}
@@ -63,12 +65,10 @@ int main(int argc, char *argv[]) {
   // feeding result matrix
 
   mr->n = m1->n;
-  mr->m =  m2->m;
-  for(int i = 0; i < mr->n; i++)
-  {
+  mr->m = m2->m;
+  for (int i = 0; i < mr->n; i++) {
     mr->body.push_back(vector<int>());
-    for(int j = 0; j < mr->m; i++)
-    {
+    for (int j = 0; j < mr->m; i++) {
       mr->body[i].push_back(0);
     }
   }
@@ -80,13 +80,22 @@ int main(int argc, char *argv[]) {
 
   int totalElementCounter = mr->n * mr->m;
   int threadsNumber = totalElementCounter / p;
-  
-  if(totalElementCounter % p > 0) 
+
+  if (totalElementCounter % p > 0)
     threadsNumber++;
 
   cout << "Numero de threads criadas: " << threadsNumber << endl;
 
-  
-  
+  pthread_t threads[threadsNumber];
+
+  for (int i = 0; i < threadsNumber; i++) {
+    threads[i] =
+        pthread_create(&threads[i], NULL, ThreadCalc, (void *)(size_t)i);
+  }
+
+  for (int i = 0; i < threadsNumber; i++) {
+    pthread_join(threads[i], NULL);
+  }
+
   return 0;
 }
