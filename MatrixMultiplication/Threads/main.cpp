@@ -1,6 +1,7 @@
 #include <iostream>
 #include <pthread.h>
 #include <vector>
+#include <fstream>
 
 using namespace std;
 
@@ -13,12 +14,50 @@ public:
   int m;
 };
 
+namespace Utils
+{
+	std::string toRemove = " \n\r\t\f\v";
+
+	std::string LeftTrim(const std::string& s)
+	{
+		auto start = s.find_first_not_of(toRemove);
+		return (start == std::string::npos) ? "" : s.substr(start);
+	}
+
+	std::string RightTrim(const std::string& s)
+	{
+		auto end = s.find_last_not_of(toRemove);
+		return (end == std::string::npos) ? "" : s.substr(0, end + 1);
+	}
+
+	std::string Trim(const std::string& s)
+	{
+		return RightTrim(LeftTrim(s));
+	}
+
+	std::vector<std::string> Split(std::string s, std::string delimiter) {
+		size_t pos_start = 0, pos_end, delim_len = delimiter.length();
+		std::string token;
+		std::vector<std::string> res;
+
+		while ((pos_end = s.find(delimiter, pos_start)) != std::string::npos) {
+			token = s.substr(pos_start, pos_end - pos_start);
+			pos_start = pos_end + delim_len;
+			res.push_back(token);
+		}
+
+		res.push_back(s.substr(pos_start));
+		return res;
+	}
+}
+
 // Global variables
 int p = 0;
 Matrix *m1 = new Matrix();
 Matrix *m2 = new Matrix();
 Matrix *mr = new Matrix();
 
+// Evaluation function
 void *ThreadCalc(void *tid) 
 {
   int currentRow = (p * (size_t)tid) / mr->n;
@@ -50,27 +89,52 @@ int main(int argc, char *argv[])
     exit(0);
   }
 
-  // Creating fake matrix
-  m1->n = 100;
-  m1->m = 100;
+  // Reading files
+  string m1Path = argv[1];
+  string m2Path = argv[2];
 
-  m2->n = 100;
-  m2->m = 100;
+  ifstream m1File(m1Path);
+	string line;
+	int lineCounter = 0;
+	int columnCounter = 0;
+	while (getline(m1File, line))
+	{
+		m1->body.push_back(vector<int>());
 
-  for (int i = 0; i < m1->n; i++) 
-  {
-    m1->body.push_back(vector<int>());
-    for (int j = 0; j < m1->m; j++) 
-      m1->body[i].push_back(rand() % 10 + 1);
-  }
+		line = Utils::Trim(line);
+		vector<string> elements = Utils::Split(line, " ");
 
-  for (int i = 0; i < m2->n; i++) 
-  {
-    m2->body.push_back(vector<int>());
-    for (int j = 0; j < m2->m; j++) 
-      m2->body[i].push_back(rand() % 10 + 1);
-  }
+		for (auto element : elements)
+			m1->body[lineCounter].push_back(stoi((element)));
 
+		lineCounter++;
+	}
+	columnCounter = m1->body[0].size();
+	m1->n = lineCounter;
+	m1->m = columnCounter;
+	m1File.close();
+
+  ifstream m2File(m2Path);
+	line = "";
+	lineCounter = 0;
+	columnCounter = 0;
+	while (getline(m2File, line))
+	{
+		m2->body.push_back(vector<int>());
+
+		line = Utils::Trim(line);
+		vector<string> elements = Utils::Split(line, " ");
+
+		for (auto element : elements)
+			m2->body[lineCounter].push_back(stoi((element)));
+
+		lineCounter++;
+	}
+	columnCounter = m2->body[0].size();
+	m2->n = lineCounter;
+	m2->m = columnCounter;
+	m2File.close();
+  
   // feeding result matrix
   mr->n = m1->n;
   mr->m = m2->m;
