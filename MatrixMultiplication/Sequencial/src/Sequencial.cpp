@@ -150,5 +150,7 @@ void Sequencial::CalculateResult() {
   }
   file << duration;
 
+  cout << "Tempo de execução[ms]: " << duration;
+
   file.close();
 }
