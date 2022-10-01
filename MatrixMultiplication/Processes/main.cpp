@@ -56,13 +56,13 @@ Matrix *mr = new Matrix();
 
 // Evaluation function
 namespace fs = experimental::filesystem;
-void * ProcessCalc(int pid) 
+void * ProcessCalc(int pid, int exec) 
 {
   fs::path workingDir(fs::current_path());
   auto targetPath = workingDir.parent_path().parent_path();
   string targetFilePath = fs::absolute(targetPath).string() +
                           "/ProjectAssets/Results/Processes/" + to_string(mr->n) + "x" +
-                          to_string(mr->m) + "/";
+                          to_string(mr->m) + "/exec_" + exec + "/";
   string targetFileName = targetFilePath + to_string(mr->n) + "x" +
                           to_string(mr->m) + "_process_" +
                           to_string((size_t)pid) + ".txt";
@@ -177,6 +177,7 @@ int main(int argc, char *argv[]) {
 
   cout << "Numero de processos criadas: " << processesNumber << endl;
 
+  int exec = atoi(argv[4]);
   pid_t processes[processesNumber];
   for(int i = 0; i < processesNumber; i++)
   {
@@ -189,7 +190,7 @@ int main(int argc, char *argv[]) {
     }
     else if(processes[i] == 0)
     {
-        ProcessCalc(i);
+        ProcessCalc(i, exec);
         exit(0);
     }
   }
