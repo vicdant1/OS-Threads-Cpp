@@ -50,6 +50,7 @@ std::vector<std::string> Split(std::string s, std::string delimiter) {
 
 // Global variables
 int p = 0;
+int exec = 0;
 Matrix *m1 = new Matrix();
 Matrix *m2 = new Matrix();
 Matrix *mr = new Matrix();
@@ -61,7 +62,7 @@ void *ThreadCalc(void *tid) {
   auto targetPath = workingDir.parent_path().parent_path();
   string targetFilePath = fs::absolute(targetPath).string() +
                           "/ProjectAssets/Results/Threads/" + to_string(mr->n) + "x" +
-                          to_string(mr->m) + "/";
+                          to_string(mr->m) + "/exec_" + to_string(exec) + "/";
   string targetFileName = targetFilePath + to_string(mr->n) + "x" +
                           to_string(mr->m) + "_thread_" +
                           to_string((size_t)tid) + ".txt";
@@ -107,6 +108,8 @@ int main(int argc, char *argv[]) {
     cout << "Quantidade de parâmetros inválida\n";
     exit(0);
   }
+
+  exec = atoi(argv[4]);
 
   // Reading files
   string m1Path = argv[1];
