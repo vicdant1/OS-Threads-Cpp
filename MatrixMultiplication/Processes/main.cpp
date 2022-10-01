@@ -62,7 +62,7 @@ void * ProcessCalc(int pid, int exec)
   auto targetPath = workingDir.parent_path().parent_path();
   string targetFilePath = fs::absolute(targetPath).string() +
                           "/ProjectAssets/Results/Processes/" + to_string(mr->n) + "x" +
-                          to_string(mr->m) + "/exec_" + exec + "/";
+                          to_string(mr->m) + "/exec_" + to_string(exec) + "/";
   string targetFileName = targetFilePath + to_string(mr->n) + "x" +
                           to_string(mr->m) + "_process_" +
                           to_string((size_t)pid) + ".txt";
