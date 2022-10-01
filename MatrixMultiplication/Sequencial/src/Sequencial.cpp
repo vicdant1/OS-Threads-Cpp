@@ -100,7 +100,7 @@ void Sequencial::ReadFile(string m1FilePath, string m2FilePath) {
   m2.close();
 }
 
-void Sequencial::CalculateResult() {
+void Sequencial::CalculateResult(int exec) {
   if (this->m1->GetM() != this->m2->GetN()) {
     cout << "Matrizes incompatíveis para realizar multiplicação. N° de colunas "
             "de M1 deve ser igual ao N° de linhas de M2\n";
@@ -118,7 +118,7 @@ void Sequencial::CalculateResult() {
       chrono::duration_cast<chrono::seconds>(now.time_since_epoch()).count();
   string targetFilePath = fs::absolute(targetPath).string() +
                           "/ProjectAssets/Results/Sequencial/" + to_string(nFinal) + "x" +
-                          to_string(mFinal) + "/";
+                          to_string(mFinal) + "/exec_" + to_string(exec) + "/";
   string targetFileName = targetFilePath + to_string(UTC) + ".txt";
 
   if (!fs::exists(targetFilePath))

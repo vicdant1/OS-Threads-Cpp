@@ -15,6 +15,8 @@ int main(int argc, char* argv[])
 	string m1Path = argv[1];
 	string m2Path = argv[2];
 
+	int exec = atoi(argv[3]);
+
 	sequencialManager->ReadFile(m1Path, m2Path);
-	sequencialManager->CalculateResult();
+	sequencialManager->CalculateResult(exec);
 }

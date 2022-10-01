@@ -11,7 +11,7 @@ class Sequencial
 public:
 	Sequencial();
 	void ReadFile(std::string m1FilePath, std::string m2FilePath);
-	void CalculateResult();
+	void CalculateResult(int exec);
 private:
 	Matrix* m1;
 	Matrix* m2;
