@@ -1,6 +1,6 @@
 #include <cstdlib>
 #include <ctime>
-#include <filesystem>
+#include <experimental/filesystem>
 #include <fstream>
 #include <iostream>
 #include <vector>
@@ -27,7 +27,7 @@ std::vector<std::vector<int>> GenerateMatrix(int n, int m) {
   return matriz;
 }
 
-namespace fs = std::filesystem;
+namespace fs = std::experimental::filesystem;
 void CreateFile(std::vector<std::vector<int>> matrix, int n, int m) {
   matrixCounter++;
 

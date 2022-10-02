@@ -1,11 +1,9 @@
 #include <chrono>
-#include <filesystem>
+#include <experimental/filesystem>
 #include <fstream>
 #include <iostream>
 #include <pthread.h>
 #include <vector>
-
-// Pendente teste com cawan -> buildar sequencial e threads na arquitetura do pc dele
 
 using namespace std;
 
@@ -56,7 +54,7 @@ Matrix *m2 = new Matrix();
 Matrix *mr = new Matrix();
 
 // Evaluation function
-namespace fs = std::filesystem;
+namespace fs = std::experimental::filesystem;
 void *ThreadCalc(void *tid) {
   fs::path workingDir(fs::current_path());
   auto targetPath = workingDir.parent_path().parent_path();
